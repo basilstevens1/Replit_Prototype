@@ -8,6 +8,8 @@ import DonationForm from '@/components/DonationForm';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useDonations } from '@/hooks/useDonations';
+import { useImpact } from '@/hooks/useImpact';
 import waterStoryImage from '@assets/generated_images/Clean_water_project_story_573328ad.png';
 import educationStoryImage from '@assets/generated_images/Education_program_story_cf00d503.png';
 import healthStoryImage from '@assets/generated_images/Healthcare_access_story_923d8707.png';
@@ -16,6 +18,8 @@ export default function Dashboard() {
   const [currentView, setCurrentView] = useState<'qualitative' | 'quantitative'>('qualitative');
   const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'annual' | 'lifetime'>('annual');
   const [showDonationForm, setShowDonationForm] = useState(false);
+  const { donations, isLoading: donationsLoading } = useDonations();
+  const { impactStats, isLoading: impactLoading } = useImpact();
 
   // todo: remove mock functionality
   const mockStories = [
@@ -137,7 +141,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <ImpactMetricCard
                 title="Lives Saved"
-                value="12.3"
+                value={impactLoading ? "..." : impactStats?.livesSaved.toFixed(1) || "0.0"}
                 change="+2.1"
                 changeType="increase"
                 description="Based on GiveWell estimates"
@@ -145,7 +149,7 @@ export default function Dashboard() {
               />
               <ImpactMetricCard
                 title="QUALYs Gained"
-                value="156.7"
+                value={impactLoading ? "..." : impactStats?.qualysGained.toFixed(1) || "0.0"}
                 change="+8.2"
                 changeType="increase"
                 description="Quality-adjusted life years"
@@ -153,10 +157,10 @@ export default function Dashboard() {
               />
               <ImpactMetricCard
                 title="Total Donated"
-                value="$24,580"
+                value={impactLoading ? "..." : `$${impactStats?.totalDonated.toLocaleString() || "0"}`}
                 change="+$2,400"
                 changeType="increase"
-                description="This year"
+                description={`${impactStats?.donationCount || 0} donations`}
                 color="orange"
               />
             </div>

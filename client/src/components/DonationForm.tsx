@@ -5,19 +5,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
+import { useDonations } from "@/hooks/useDonations";
+import type { InsertDonation } from "@shared/schema";
 
 export default function DonationForm() {
   const [amount, setAmount] = useState('');
   const [charity, setCharity] = useState('');
   const [date, setDate] = useState('');
+  const { createDonation, isCreating } = useDonations();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Donation submitted:', { amount, charity, date });
-    // todo: remove mock functionality - handle actual form submission
+    
+    if (!amount || !charity || !date) {
+      return;
+    }
+
+    const donationData: InsertDonation = {
+      amount,
+      charity,
+      charityCategory: getCategoryForCharity(charity),
+      donationDate: new Date(date),
+      notes: null,
+    };
+
+    createDonation(donationData);
+    
+    // Reset form
     setAmount('');
     setCharity('');
     setDate('');
+  };
+
+  const getCategoryForCharity = (charityName: string): string => {
+    const categoryMap: Record<string, string> = {
+      'givewell': 'Global Health',
+      'charity-water': 'Water & Sanitation',
+      'malala-fund': 'Education',
+      'partners-in-health': 'Healthcare',
+      'against-malaria': 'Disease Prevention',
+    };
+    return categoryMap[charityName] || 'Other';
   };
 
   return (
@@ -69,8 +97,13 @@ export default function DonationForm() {
             />
           </div>
           
-          <Button type="submit" className="w-full" data-testid="button-submit-donation">
-            Add Donation
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={isCreating || !amount || !charity || !date}
+            data-testid="button-submit-donation"
+          >
+            {isCreating ? "Adding..." : "Add Donation"}
           </Button>
         </form>
       </CardContent>
