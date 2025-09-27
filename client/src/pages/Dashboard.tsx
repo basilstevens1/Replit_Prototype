@@ -10,6 +10,8 @@ import ProgressTracker from '@/components/ProgressTracker';
 import AchievementsBadges from '@/components/AchievementsBadges';
 import ConfidenceMeter from '@/components/ConfidenceMeter';
 import FirstTimeOnboarding from '@/components/FirstTimeOnboarding';
+import OurMission from '@/components/OurMission';
+import OurApproach from '@/components/OurApproach';
 import { Button } from '@/components/ui/button';
 import { Plus, Users } from 'lucide-react';
 import { useDonations } from '@/hooks/useDonations';
@@ -19,7 +21,7 @@ import { useStories } from '@/hooks/useStories';
 import { useUserProgress, useCompleteOnboarding } from '@/hooks/useGamification';
 
 export default function Dashboard() {
-  const [currentView, setCurrentView] = useState<'qualitative' | 'quantitative'>('qualitative');
+  const [currentView, setCurrentView] = useState<'qualitative' | 'quantitative' | 'mission' | 'approach'>('qualitative');
   const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'annual' | 'lifetime'>('annual');
   const [showDonationForm, setShowDonationForm] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -147,7 +149,7 @@ export default function Dashboard() {
             </div>
 
             {/* Content based on current view */}
-            {currentView === 'qualitative' ? (
+            {currentView === 'qualitative' && (
               <div className="space-y-6">
                 <div>
                   <h2 className="text-2xl font-semibold mb-2">Your Impact Stories</h2>
@@ -167,7 +169,9 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-            ) : (
+            )}
+
+            {currentView === 'quantitative' && (
               <div className="space-y-6">
                 <div>
                   <h2 className="text-2xl font-semibold mb-2">Impact Analytics</h2>
@@ -197,6 +201,10 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+
+            {currentView === 'mission' && <OurMission />}
+
+            {currentView === 'approach' && <OurApproach />}
           </div>
         </div>
       </div>
