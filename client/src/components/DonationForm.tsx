@@ -21,8 +21,14 @@ export default function DonationForm() {
       return;
     }
 
+    // Validate and format the amount
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      return;
+    }
+
     const donationData: InsertDonation = {
-      amount,
+      amount: numericAmount.toFixed(2), // Convert to string with 2 decimal places
       charity,
       charityCategory: getCategoryForCharity(charity),
       donationDate: new Date(date),
@@ -63,6 +69,8 @@ export default function DonationForm() {
             <Input
               id="amount"
               type="number"
+              step="0.01"
+              min="0"
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
