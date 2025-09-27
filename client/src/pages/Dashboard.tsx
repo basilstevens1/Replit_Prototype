@@ -6,8 +6,11 @@ import ImpactChart from '@/components/ImpactChart';
 import TimePeriodSelector from '@/components/TimePeriodSelector';
 import DonationForm from '@/components/DonationForm';
 import ThemeToggle from '@/components/ThemeToggle';
+import ProgressTracker from '@/components/ProgressTracker';
+import AchievementsBadges from '@/components/AchievementsBadges';
+import ConfidenceMeter from '@/components/ConfidenceMeter';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import { useDonations } from '@/hooks/useDonations';
 import { useImpact } from '@/hooks/useImpact';
 import { useChartData } from '@/hooks/useChartData';
@@ -72,14 +75,14 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Impact Metrics - Always visible */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Enhanced Impact Metrics with Confidence */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <ImpactMetricCard
                 title="Lives Saved"
                 value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
                 change="+2.1"
                 changeType="increase"
-                description="Based on GiveWell estimates"
+                description="Based on effectiveness research"
                 color="green"
               />
               <ImpactMetricCard
@@ -91,13 +94,27 @@ export default function Dashboard() {
                 color="blue"
               />
               <ImpactMetricCard
+                title="People Helped"
+                value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
+                change="+247"
+                changeType="increase"
+                description="Individuals positively impacted"
+                color="blue"
+              />
+              <ImpactMetricCard
                 title="Total Donated"
                 value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
                 change="+$2,400"
                 changeType="increase"
-                description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations`}
+                description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
                 color="orange"
               />
+            </div>
+
+            {/* Gamification Features */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ProgressTracker />
+              <AchievementsBadges />
             </div>
 
             {/* Content based on current view */}

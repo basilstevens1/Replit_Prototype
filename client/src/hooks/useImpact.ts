@@ -5,6 +5,8 @@ interface ImpactStats {
   livesSaved: number;
   qualysGained: number;
   donationCount: number;
+  peopleImpacted: number;
+  confidenceLevel: string;
 }
 
 export function useImpact() {

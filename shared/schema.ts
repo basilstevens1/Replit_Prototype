@@ -7,6 +7,8 @@ import {
   varchar,
   decimal,
   text,
+  integer,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -55,6 +57,49 @@ export const impactCalculations = pgTable("impact_calculations", {
   calculatedAt: timestamp("calculated_at").defaultNow(),
 });
 
+// User achievements and gamification tracking
+export const userAchievements = pgTable("user_achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  achievementType: varchar("achievement_type").notNull(), // 'first_donation', 'milestone_100', 'streak_7', etc.
+  title: varchar("title").notNull(),
+  description: text("description"),
+  badgeIcon: varchar("badge_icon"), // lucide icon name
+  badgeColor: varchar("badge_color").default("blue"),
+  unlockedAt: timestamp("unlocked_at").defaultNow(),
+});
+
+// User progress and streaks
+export const userProgress = pgTable("user_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastDonationDate: timestamp("last_donation_date"),
+  totalDonations: integer("total_donations").default(0),
+  totalImpactScore: decimal("total_impact_score", { precision: 12, scale: 2 }).default("0"),
+  level: integer("level").default(1),
+  experiencePoints: integer("experience_points").default(0),
+  nextMilestone: decimal("next_milestone", { precision: 10, scale: 2 }).default("100"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Charity effectiveness data for confidence meters
+export const charityEffectiveness = pgTable("charity_effectiveness", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  charityKey: varchar("charity_key").notNull().unique(), // matches donation.charity
+  charityName: varchar("charity_name").notNull(),
+  category: varchar("category").notNull(),
+  costPerLifeSaved: decimal("cost_per_life_saved", { precision: 10, scale: 2 }),
+  costPerQaly: decimal("cost_per_qaly", { precision: 8, scale: 2 }),
+  peopleHelpedPerDollar: decimal("people_helped_per_dollar", { precision: 6, scale: 4 }),
+  confidenceLevel: varchar("confidence_level").notNull(), // 'high', 'medium', 'low'
+  evidenceQuality: varchar("evidence_quality"), // 'randomized_trial', 'observational', 'proxy_estimate'
+  dataSource: varchar("data_source"), // 'givewell', 'charity_evaluator', 'proxy'
+  notes: text("notes"),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+});
+
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 
@@ -64,6 +109,29 @@ export const insertDonationSchema = createInsertSchema(donations).omit({
   createdAt: true,
 });
 
+export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
+  id: true,
+  userId: true,
+  updatedAt: true,
+});
+
+export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({
+  id: true,
+  userId: true,
+  unlockedAt: true,
+});
+
+export const insertCharityEffectivenessSchema = createInsertSchema(charityEffectiveness).omit({
+  id: true,
+  lastUpdated: true,
+});
+
 export type InsertDonation = z.infer<typeof insertDonationSchema>;
 export type Donation = typeof donations.$inferSelect;
 export type ImpactCalculation = typeof impactCalculations.$inferSelect;
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type UserProgress = typeof userProgress.$inferSelect;
+export type CharityEffectiveness = typeof charityEffectiveness.$inferSelect;
+export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export type InsertCharityEffectiveness = z.infer<typeof insertCharityEffectivenessSchema>;
