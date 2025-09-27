@@ -8,7 +8,7 @@ interface ImpactStats {
 }
 
 export function useImpact() {
-  const { data: impactStats, isLoading } = useQuery<ImpactStats>({
+  const { data: impactStats, isLoading, error } = useQuery<ImpactStats>({
     queryKey: ["/api/impact"],
     retry: false,
   });
@@ -16,5 +16,7 @@ export function useImpact() {
   return {
     impactStats,
     isLoading,
+    error,
+    hasError: !!error,
   };
 }
