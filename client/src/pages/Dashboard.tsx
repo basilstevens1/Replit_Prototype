@@ -9,21 +9,50 @@ import ThemeToggle from '@/components/ThemeToggle';
 import ProgressTracker from '@/components/ProgressTracker';
 import AchievementsBadges from '@/components/AchievementsBadges';
 import ConfidenceMeter from '@/components/ConfidenceMeter';
+import FirstTimeOnboarding from '@/components/FirstTimeOnboarding';
 import { Button } from '@/components/ui/button';
 import { Plus, Users } from 'lucide-react';
 import { useDonations } from '@/hooks/useDonations';
 import { useImpact } from '@/hooks/useImpact';
 import { useChartData } from '@/hooks/useChartData';
 import { useStories } from '@/hooks/useStories';
+import { useUserProgress, useCompleteOnboarding } from '@/hooks/useGamification';
 
 export default function Dashboard() {
   const [currentView, setCurrentView] = useState<'qualitative' | 'quantitative'>('qualitative');
   const [selectedPeriod, setSelectedPeriod] = useState<'monthly' | 'annual' | 'lifetime'>('annual');
   const [showDonationForm, setShowDonationForm] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  
   const { donations, isLoading: donationsLoading } = useDonations();
   const { impactStats, isLoading: impactLoading, hasError: impactError } = useImpact();
   const { donationTrends, impactTrends, categoryBreakdown, isLoading: chartLoading } = useChartData(selectedPeriod);
   const { stories, isLoading: storiesLoading } = useStories();
+  const { data: userProgress, isLoading: progressLoading } = useUserProgress();
+  const completeOnboarding = useCompleteOnboarding();
+
+  // Show onboarding for new users who haven't completed it
+  const shouldShowOnboarding = userProgress && !userProgress.onboardingCompleted && !progressLoading;
+
+  const handleOnboardingComplete = () => {
+    console.log('Dashboard: handleOnboardingComplete called');
+    console.log('completeOnboarding mutation state:', completeOnboarding);
+    
+    completeOnboarding.mutate(undefined, {
+      onSuccess: (data) => {
+        console.log('Onboarding completion success:', data);
+        setShowOnboarding(false);
+      },
+      onError: (error) => {
+        console.error('Onboarding completion error:', error);
+      }
+    });
+  };
+
+  const handleOnboardingClose = () => {
+    console.log('Dashboard: handleOnboardingClose called');
+    setShowOnboarding(false);
+  };
 
 
   return (
@@ -171,6 +200,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* First Time Onboarding Modal */}
+      <FirstTimeOnboarding 
+        isOpen={shouldShowOnboarding || showOnboarding}
+        onClose={handleOnboardingClose}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 }

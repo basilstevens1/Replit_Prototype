@@ -50,3 +50,16 @@ export function useAllCharities() {
     staleTime: 10 * 60 * 1000, // Fresh for 10 minutes
   });
 }
+
+// Hook for completing onboarding
+export function useCompleteOnboarding() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: () => apiRequest('POST', '/api/onboarding/complete'),
+    onSuccess: () => {
+      // Invalidate progress cache to refetch with onboardingCompleted = true
+      queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
+    },
+  });
+}

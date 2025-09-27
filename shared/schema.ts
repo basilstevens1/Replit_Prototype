@@ -81,6 +81,7 @@ export const userProgress = pgTable("user_progress", {
   level: integer("level").default(1),
   experiencePoints: integer("experience_points").default(0),
   nextMilestone: decimal("next_milestone", { precision: 10, scale: 2 }).default("100"),
+  onboardingCompleted: boolean("onboarding_completed").default(false),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

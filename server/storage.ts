@@ -277,6 +277,13 @@ export class DatabaseStorage implements IStorage {
     return newAchievement;
   }
 
+  async completeOnboarding(userId: string): Promise<void> {
+    await db
+      .update(userProgress)
+      .set({ onboardingCompleted: true, updatedAt: new Date() })
+      .where(eq(userProgress.userId, userId));
+  }
+
   async checkAndUnlockAchievements(userId: string): Promise<UserAchievement[]> {
     const progress = await this.getUserProgress(userId);
     const donations = await this.getUserDonations(userId);
