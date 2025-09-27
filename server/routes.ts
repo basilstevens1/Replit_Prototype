@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertDonationSchema } from "@shared/schema";
+import { insertDonationSchema, updateTargetSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -113,6 +113,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user progress:", error);
       res.status(500).json({ message: "Failed to fetch user progress" });
+    }
+  });
+
+  // Update target settings for impact tracking
+  app.put('/api/progress/targets', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const targetSettings = updateTargetSettingsSchema.parse(req.body);
+      const updatedProgress = await storage.updateUserTargetSettings(userId, targetSettings);
+      res.json(updatedProgress);
+    } catch (error) {
+      console.error("Error updating target settings:", error);
+      res.status(500).json({ message: "Failed to update target settings" });
     }
   });
 

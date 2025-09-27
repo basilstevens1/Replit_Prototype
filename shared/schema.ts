@@ -78,9 +78,16 @@ export const userProgress = pgTable("user_progress", {
   lastDonationDate: timestamp("last_donation_date"),
   totalDonations: integer("total_donations").default(0),
   totalImpactScore: decimal("total_impact_score", { precision: 12, scale: 2 }).default("0"),
-  level: integer("level").default(1),
-  experiencePoints: integer("experience_points").default(0),
-  nextMilestone: decimal("next_milestone", { precision: 10, scale: 2 }).default("100"),
+  // Impact-based targets (user-configurable)
+  livesSavedTarget: decimal("lives_saved_target", { precision: 8, scale: 2 }).default("1.0"),
+  qualysGainedTarget: decimal("qualys_gained_target", { precision: 10, scale: 2 }).default("10.0"),
+  peopleHelpedTarget: integer("people_helped_target").default(100),
+  totalDonatedTarget: decimal("total_donated_target", { precision: 10, scale: 2 }).default("1000.00"),
+  // Target toggle settings
+  trackLivesSaved: boolean("track_lives_saved").default(true),
+  trackQualysGained: boolean("track_qualys_gained").default(true),
+  trackPeopleHelped: boolean("track_people_helped").default(true),
+  trackTotalDonated: boolean("track_total_donated").default(true),
   onboardingCompleted: boolean("onboarding_completed").default(false),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -116,6 +123,17 @@ export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
   updatedAt: true,
 });
 
+export const updateTargetSettingsSchema = createInsertSchema(userProgress).pick({
+  livesSavedTarget: true,
+  qualysGainedTarget: true,
+  peopleHelpedTarget: true,
+  totalDonatedTarget: true,
+  trackLivesSaved: true,
+  trackQualysGained: true,
+  trackPeopleHelped: true,
+  trackTotalDonated: true,
+});
+
 export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({
   id: true,
   userId: true,
@@ -134,5 +152,6 @@ export type UserAchievement = typeof userAchievements.$inferSelect;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type CharityEffectiveness = typeof charityEffectiveness.$inferSelect;
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
+export type UpdateTargetSettings = z.infer<typeof updateTargetSettingsSchema>;
 export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
 export type InsertCharityEffectiveness = z.infer<typeof insertCharityEffectivenessSchema>;

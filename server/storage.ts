@@ -15,6 +15,7 @@ import {
   type CharityEffectiveness,
   type InsertUserAchievement,
   type InsertUserProgress,
+  type UpdateTargetSettings,
   type InsertCharityEffectiveness,
 } from "@shared/schema";
 import { db } from "./db";
@@ -231,30 +232,52 @@ export class DatabaseStorage implements IStorage {
       // daysDiff > 1 means streak is broken, so newStreak stays 1
     }
 
-    // Calculate experience points and level
-    const baseXP = Math.floor(donationAmount / 10); // 1 XP per $10 donated
-    const streakBonus = Math.min(newStreak * 5, 50); // Up to 50 XP bonus for streaks
-    const newXP = (currentProgress?.experiencePoints || 0) + baseXP + streakBonus;
-    const newLevel = Math.floor(newXP / 100) + 1; // Level up every 100 XP
-
-    // Calculate impact score
-    const impactScore = donationAmount / 100; // Simple impact scoring
+    // Calculate simple impact score (keeping this for legacy compatibility)
+    const impactScore = donationAmount / 100;
     const newImpactScore = parseFloat(currentProgress?.totalImpactScore || "0") + impactScore;
 
-    // Set next milestone
-    const currentTotal = parseFloat(currentProgress?.nextMilestone || "100");
-    const newMilestone = donationAmount >= currentTotal ? currentTotal * 2 : currentTotal;
-
-    return await this.upsertUserProgress(userId, {
+    // Preserve existing target settings and only update progress fields
+    const updateData: Partial<UserProgress> = {
       currentStreak: newStreak,
       longestStreak: Math.max(newStreak, currentProgress?.longestStreak || 0),
       lastDonationDate: new Date(),
       totalDonations: userDonations.length,
       totalImpactScore: newImpactScore.toFixed(2),
-      level: newLevel,
-      experiencePoints: newXP,
-      nextMilestone: newMilestone.toFixed(2),
-    });
+    };
+
+    // Preserve existing target settings if they exist
+    if (currentProgress) {
+      updateData.livesSavedTarget = currentProgress.livesSavedTarget;
+      updateData.qualysGainedTarget = currentProgress.qualysGainedTarget;
+      updateData.peopleHelpedTarget = currentProgress.peopleHelpedTarget;
+      updateData.totalDonatedTarget = currentProgress.totalDonatedTarget;
+      updateData.trackLivesSaved = currentProgress.trackLivesSaved;
+      updateData.trackQualysGained = currentProgress.trackQualysGained;
+      updateData.trackPeopleHelped = currentProgress.trackPeopleHelped;
+      updateData.trackTotalDonated = currentProgress.trackTotalDonated;
+    }
+
+    return await this.upsertUserProgress(userId, updateData);
+  }
+
+  async updateUserTargetSettings(userId: string, targetSettings: UpdateTargetSettings): Promise<UserProgress> {
+    const currentProgress = await this.getUserProgress(userId);
+    
+    // Merge with existing progress data to avoid overwriting other fields
+    const updateData = {
+      ...targetSettings,
+      // Preserve existing progress fields
+      ...(currentProgress && {
+        currentStreak: currentProgress.currentStreak,
+        longestStreak: currentProgress.longestStreak,
+        lastDonationDate: currentProgress.lastDonationDate,
+        totalDonations: currentProgress.totalDonations,
+        totalImpactScore: currentProgress.totalImpactScore,
+        onboardingCompleted: currentProgress.onboardingCompleted,
+      }),
+    };
+
+    return await this.upsertUserProgress(userId, updateData);
   }
 
   // Gamification - Achievements
@@ -336,16 +359,17 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
-    // Level achievements
-    const levelMilestones = [5, 10, 25, 50, 100];
-    for (const milestone of levelMilestones) {
-      if ((progress.level || 1) >= milestone && !unlockedTypes.has(`level_${milestone}`)) {
+    // Impact-based achievements (lives saved milestones)
+    const impactStats = await this.getUserImpactStats(userId);
+    const livesSavedMilestones = [1, 5, 10, 25, 50];
+    for (const milestone of livesSavedMilestones) {
+      if (impactStats.livesSaved >= milestone && !unlockedTypes.has(`lives_saved_${milestone}`)) {
         const achievement = await this.unlockAchievement(userId, {
-          achievementType: `level_${milestone}`,
-          title: `Level ${milestone}`,
-          description: `Reached level ${milestone}!`,
-          badgeIcon: 'Star',
-          badgeColor: 'purple',
+          achievementType: `lives_saved_${milestone}`,
+          title: `${milestone} Lives Saved`,
+          description: `Your donations have helped save ${milestone} lives!`,
+          badgeIcon: 'Heart',
+          badgeColor: 'red',
         });
         newAchievements.push(achievement);
       }
