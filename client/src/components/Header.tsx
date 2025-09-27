@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Heart, BarChart3, Bookmark, LogOut } from "lucide-react";
+import { Heart, BarChart3, Bookmark, LogOut, Target, BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderProps {
-  currentView: 'qualitative' | 'quantitative';
-  onViewChange: (view: 'qualitative' | 'quantitative') => void;
+  currentView: 'qualitative' | 'quantitative' | 'mission' | 'approach';
+  onViewChange: (view: 'qualitative' | 'quantitative' | 'mission' | 'approach') => void;
 }
 
 export default function Header({ currentView, onViewChange }: HeaderProps) {
@@ -54,6 +54,26 @@ export default function Header({ currentView, onViewChange }: HeaderProps) {
               >
                 <BarChart3 className="h-4 w-4" />
                 Metrics
+              </Button>
+              <Button
+                variant={currentView === 'mission' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('mission')}
+                className="flex items-center gap-2"
+                data-testid="button-mission-view"
+              >
+                <Target className="h-4 w-4" />
+                Our Mission
+              </Button>
+              <Button
+                variant={currentView === 'approach' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('approach')}
+                className="flex items-center gap-2"
+                data-testid="button-approach-view"
+              >
+                <BookOpen className="h-4 w-4" />
+                Our Approach
               </Button>
             </div>
             
