@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 
     // Verify required environment variables
     if (isProduction) {
-      const requiredEnvVars = ['DATABASE_URL', 'SESSION_SECRET'];
+      const requiredEnvVars = ['DATABASE_URL'];
       const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
       
       if (missingVars.length > 0) {
