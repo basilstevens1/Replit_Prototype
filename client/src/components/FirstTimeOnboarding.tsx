@@ -221,7 +221,7 @@ export default function FirstTimeOnboarding({ isOpen, onClose, onComplete }: Fir
 
   const handleSkip = () => {
     console.log('Skipping onboarding...');
-    onClose();
+    onComplete();
   };
 
   const currentStepData = steps[currentStep];

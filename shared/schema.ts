@@ -115,6 +115,8 @@ export const insertDonationSchema = createInsertSchema(donations).omit({
   id: true,
   userId: true,
   createdAt: true,
+}).extend({
+  donationDate: z.coerce.date(), // Coerce string dates from JSON to Date objects
 });
 
 export const insertUserProgressSchema = createInsertSchema(userProgress).omit({
