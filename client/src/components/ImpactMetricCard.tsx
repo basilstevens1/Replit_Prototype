@@ -5,8 +5,8 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 interface ImpactMetricCardProps {
   title: string;
   value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
+  change?: string;
+  changeType?: 'increase' | 'decrease';
   description: string;
   color: 'green' | 'blue' | 'orange';
 }
@@ -31,14 +31,16 @@ export default function ImpactMetricCard({
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <Badge variant="secondary" className={colorClasses[color]}>
-          {changeType === 'increase' ? (
-            <TrendingUp className="h-3 w-3 mr-1" />
-          ) : (
-            <TrendingDown className="h-3 w-3 mr-1" />
-          )}
-          {change}
-        </Badge>
+        {change && changeType && (
+          <Badge variant="secondary" className={colorClasses[color]}>
+            {changeType === 'increase' ? (
+              <TrendingUp className="h-3 w-3 mr-1" />
+            ) : (
+              <TrendingDown className="h-3 w-3 mr-1" />
+            )}
+            {change}
+          </Badge>
+        )}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-semibold tabular-nums" data-testid={`text-metric-value-${title.toLowerCase().replace(/\s+/g, '-')}`}>
