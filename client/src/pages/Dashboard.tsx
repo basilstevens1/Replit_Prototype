@@ -114,24 +114,32 @@ export default function Dashboard() {
                   <ImpactMetricCard
                     title="Lives Saved"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.livesSaved?.toFixed(1) ?? "0.0"}`}
+                    changeType="increase"
                     description="Based on effectiveness research"
                     color="green"
                   />
                   <ImpactMetricCard
                     title="QUALYs Gained"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.qualysGained?.toFixed(1) ?? "0.0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.qualysGained?.toFixed(1) ?? "0.0"}`}
+                    changeType="increase"
                     description="Quality-adjusted life years"
                     color="blue"
                   />
                   <ImpactMetricCard
                     title="People Helped"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}`}
+                    changeType="increase"
                     description="Individuals positively impacted"
                     color="blue"
                   />
                   <ImpactMetricCard
                     title="Total Donated"
                     value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    change={impactLoading || impactError ? "" : `+$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    changeType="increase"
                     description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
                     color="orange"
                   />
@@ -172,24 +180,32 @@ export default function Dashboard() {
                   <ImpactMetricCard
                     title="Lives Saved"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.livesSaved?.toFixed(1) ?? "0.0"}`}
+                    changeType="increase"
                     description="Based on effectiveness research"
                     color="green"
                   />
                   <ImpactMetricCard
                     title="QUALYs Gained"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.qualysGained?.toFixed(1) ?? "0.0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.qualysGained?.toFixed(1) ?? "0.0"}`}
+                    changeType="increase"
                     description="Quality-adjusted life years"
                     color="blue"
                   />
                   <ImpactMetricCard
                     title="People Helped"
                     value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
+                    change={impactLoading || impactError ? "" : `+${impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}`}
+                    changeType="increase"
                     description="Individuals positively impacted"
                     color="blue"
                   />
                   <ImpactMetricCard
                     title="Total Donated"
                     value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    change={impactLoading || impactError ? "" : `+$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    changeType="increase"
                     description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
                     color="orange"
                   />
