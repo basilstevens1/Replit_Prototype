@@ -106,100 +106,130 @@ export default function Dashboard() {
               />
             </div>
 
-            {/* Enhanced Impact Metrics with Confidence */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <ImpactMetricCard
-                title="Lives Saved"
-                value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
-                change="+2.1"
-                changeType="increase"
-                description="Based on effectiveness research"
-                color="green"
-              />
-              <ImpactMetricCard
-                title="QUALYs Gained"
-                value={impactLoading ? "..." : impactError ? "Error" : impactStats?.qualysGained?.toFixed(1) ?? "0.0"}
-                change="+8.2"
-                changeType="increase"
-                description="Quality-adjusted life years"
-                color="blue"
-              />
-              <ImpactMetricCard
-                title="People Helped"
-                value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
-                change="+247"
-                changeType="increase"
-                description="Individuals positively impacted"
-                color="blue"
-              />
-              <ImpactMetricCard
-                title="Total Donated"
-                value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
-                change="+$2,400"
-                changeType="increase"
-                description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
-                color="orange"
-              />
-            </div>
-
-            {/* Gamification Features */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ProgressTracker />
-              <AchievementsBadges />
-            </div>
-
             {/* Content based on current view */}
             {currentView === 'qualitative' && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2">Your Impact Stories</h2>
-                  <p className="text-muted-foreground">
-                    See how your donations are making a real difference in communities around the world.
-                  </p>
+              <>
+                {/* Enhanced Impact Metrics with Confidence */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <ImpactMetricCard
+                    title="Lives Saved"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
+                    description="Based on effectiveness research"
+                    color="green"
+                  />
+                  <ImpactMetricCard
+                    title="QUALYs Gained"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.qualysGained?.toFixed(1) ?? "0.0"}
+                    description="Quality-adjusted life years"
+                    color="blue"
+                  />
+                  <ImpactMetricCard
+                    title="People Helped"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
+                    description="Individuals positively impacted"
+                    color="blue"
+                  />
+                  <ImpactMetricCard
+                    title="Total Donated"
+                    value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
+                    color="orange"
+                  />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {storiesLoading ? (
-                    <div className="col-span-full text-center text-muted-foreground">
-                      Loading stories...
-                    </div>
-                  ) : (
-                    stories.map((story, index) => (
-                      <StoryCard key={index} {...story} />
-                    ))
-                  )}
+
+                {/* Gamification Features */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <ProgressTracker />
+                  <AchievementsBadges />
                 </div>
-              </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-2">Your Impact Stories</h2>
+                    <p className="text-muted-foreground">
+                      See how your donations are making a real difference in communities around the world.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {storiesLoading ? (
+                      <div className="col-span-full text-center text-muted-foreground">
+                        Loading stories...
+                      </div>
+                    ) : (
+                      stories.map((story, index) => (
+                        <StoryCard key={index} {...story} />
+                      ))
+                    )}
+                  </div>
+                </div>
+              </>
             )}
 
             {currentView === 'quantitative' && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2">Impact Analytics</h2>
-                  <p className="text-muted-foreground">
-                    Track your charitable impact with data-driven insights and research-based estimates.
-                  </p>
+              <>
+                {/* Enhanced Impact Metrics with Confidence */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <ImpactMetricCard
+                    title="Lives Saved"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.livesSaved?.toFixed(1) ?? "0.0"}
+                    description="Based on effectiveness research"
+                    color="green"
+                  />
+                  <ImpactMetricCard
+                    title="QUALYs Gained"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.qualysGained?.toFixed(1) ?? "0.0"}
+                    description="Quality-adjusted life years"
+                    color="blue"
+                  />
+                  <ImpactMetricCard
+                    title="People Helped"
+                    value={impactLoading ? "..." : impactError ? "Error" : impactStats?.peopleImpacted ? Math.round(impactStats.peopleImpacted).toLocaleString() : "0"}
+                    description="Individuals positively impacted"
+                    color="blue"
+                  />
+                  <ImpactMetricCard
+                    title="Total Donated"
+                    value={impactLoading ? "..." : impactError ? "Error" : `$${impactStats?.totalDonated?.toLocaleString() ?? "0"}`}
+                    description={impactError ? "Unable to load" : `${impactStats?.donationCount ?? 0} donations • ${impactStats?.confidenceLevel ? impactStats.confidenceLevel + ' confidence' : 'Based on research'}`}
+                    color="orange"
+                  />
                 </div>
+
+                {/* Gamification Features */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ImpactChart
-                    title="Donation Trends"
-                    data={chartLoading ? [] : donationTrends}
-                    type="bar"
-                    color="hsl(var(--chart-3))"
-                  />
-                  <ImpactChart
-                    title="Lives Saved Over Time"
-                    data={chartLoading ? [] : impactTrends}
-                    type="line"
-                    color="hsl(var(--chart-1))"
-                  />
-                  <ImpactChart
-                    title="Category Distribution"
-                    data={chartLoading ? [] : categoryBreakdown}
-                    type="bar"
-                    color="hsl(var(--chart-4))"
-                  />
+                  <ProgressTracker />
+                  <AchievementsBadges />
                 </div>
-              </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold mb-2">Impact Analytics</h2>
+                    <p className="text-muted-foreground">
+                      Track your charitable impact with data-driven insights and research-based estimates.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <ImpactChart
+                      title="Donation Trends"
+                      data={chartLoading ? [] : donationTrends}
+                      type="bar"
+                      color="hsl(var(--chart-3))"
+                    />
+                    <ImpactChart
+                      title="Lives Saved Over Time"
+                      data={chartLoading ? [] : impactTrends}
+                      type="line"
+                      color="hsl(var(--chart-1))"
+                    />
+                    <ImpactChart
+                      title="Category Distribution"
+                      data={chartLoading ? [] : categoryBreakdown}
+                      type="bar"
+                      color="hsl(var(--chart-4))"
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             {currentView === 'mission' && <OurMission />}
